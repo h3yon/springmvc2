@@ -1,5 +1,7 @@
 package hello.itemservice.domain.item;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -9,6 +11,11 @@ public class Item {
     private String itemName;
     private Integer price;
     private Integer quantity;
+
+    private Boolean open; //판매여부
+    private List<String> regions; //등록 지역
+    private ItemType itemType;
+    private String deliveryCode; //배송 방식
 
     public Item() {
     }

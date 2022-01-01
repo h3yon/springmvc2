@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -33,6 +34,11 @@ public class ValidationItemControllerV2 {
 
     private final ItemRepository itemRepository;
     private final ItemValidator itemValidator;
+
+    @InitBinder //이 컨트롤러만 해당, 바인딩/검증기능. 컨트롤러 호출될 때마다 이거 호출
+    public void init(WebDataBinder dataBinder){
+        dataBinder.addValidators(itemValidator);
+    }
 
     @GetMapping
     public String items(Model model) {
@@ -194,17 +200,27 @@ public class ValidationItemControllerV2 {
         return "redirect:/validation/v2/items/{itemId}";
     }
 
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV5(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
-
         itemValidator.validate(item, bindingResult);
-
         //검증에 실패하면 다시 입력폼으로
         if(bindingResult.hasErrors()){
             log.info("errors = {}", bindingResult);
             return "validation/v2/addForm";
         }
+        //성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
 
+    @PostMapping("/add")
+    public String addItemV6(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+        if(bindingResult.hasErrors()){
+            log.info("errors = {}", bindingResult);
+            return "validation/v2/addForm";
+        }
         //성공 로직
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());

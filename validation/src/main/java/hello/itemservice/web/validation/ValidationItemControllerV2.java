@@ -35,10 +35,10 @@ public class ValidationItemControllerV2 {
     private final ItemRepository itemRepository;
     private final ItemValidator itemValidator;
 
-    @InitBinder //이 컨트롤러만 해당, 바인딩/검증기능. 컨트롤러 호출될 때마다 이거 호출
+/*    @InitBinder //이 컨트롤러만 해당, 바인딩/검증기능. 컨트롤러 호출될 때마다 이거 호출
     public void init(WebDataBinder dataBinder){
         dataBinder.addValidators(itemValidator);
-    }
+    }*/
 
     @GetMapping
     public String items(Model model) {

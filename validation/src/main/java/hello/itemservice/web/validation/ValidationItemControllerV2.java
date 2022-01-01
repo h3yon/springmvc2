@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -159,10 +160,11 @@ public class ValidationItemControllerV2 {
         log.info("objectName={}", bindingResult.getObjectName());
         log.info("target={}", bindingResult.getTarget());
 
-        if(!StringUtils.hasText(item.getItemName())){
-//            bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, new String[]{"required.item.itemName"}, null, null));
-            bindingResult.rejectValue("itemName", "required");  //아 규칙이 있구나
-        }
+        // 둘이 같음
+        ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");
+//        if(!StringUtils.hasText(item.getItemName())){
+//            bindingResult.rejectValue("itemName", "required");
+//        }
         if(item.getPrice() == null || item.getPrice() < 1000 | item.getPrice() > 1000000){
             bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
         }
